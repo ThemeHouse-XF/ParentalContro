@@ -1,0 +1,789 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="ThemeHouse_ParentalContro" title="[⌂] Parental Control" version_string="1.0.0" version_id="1447261019" url="http://xf.themehouse.io/" install_callback_class="ThemeHouse_Install" install_callback_method="install" uninstall_callback_class="ThemeHouse_Install" uninstall_callback_method="uninstall">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="th_option_limits_parentalcontrol"><![CDATA[<xen:controlunit label="{$preparedOption.title}" name="{$fieldPrefix}[{$preparedOption.option_id}]" value="{$preparedOption.option_value}"
+hint="{$preparedOption.hint}" class="{$extra.class}">
+	<xen:explain>{xen:raw $preparedOption.explain}</xen:explain>
+	<xen:html>
+		<ul>
+		<xen:foreach loop="{$preparedOption.permissionInterfaceGroups}" key="{$interfaceGroupId}" value="{$interfaceGroup}">
+			<xen:if hascontent="true">
+				<li>
+					{$interfaceGroup.title}
+					<ul>
+						<xen:contentcheck>
+						<xen:if is="{$preparedOption.permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}">
+						<xen:foreach loop="{$preparedOption.permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}" value="{$permission}">
+							<xen:if is="{$permission.permission_type} == 'integer'">
+								<li>
+								<label for="ctrl_{$fieldPrefix}_{$preparedOption.option_id}_{$permission.permission_group_id}_{$permission.permission_id}_1">
+									<input type="checkbox" name="{$fieldPrefix}[{$preparedOption.option_id}][{$permission.permission_group_id}][{$permission.permission_id}]" value="1" id="ctrl_{$fieldPrefix}_{$preparedOption.option_id}_{$permission.permission_group_id}_{$permission.permission_id}_1" {xen:checked '{$preparedOption.option_value.{$permission.permission_group_id}.{$permission.permission_id}}'} />
+									{$permission.title}
+								</label>
+								</li>
+							</xen:if>
+						</xen:foreach>
+						</xen:if>
+						</xen:contentcheck>
+					</ul>
+				</li>
+			</xen:if>
+		</xen:foreach>
+		</ul>
+		<xen:include template="option_list_option_editlink" />
+		<input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+		{xen:raw $editLink}
+	</xen:html>
+</xen:controlunit>]]></template>
+    <template title="th_option_permissions_parentalcontrol"><![CDATA[<xen:controlunit label="{$preparedOption.title}" name="{$fieldPrefix}[{$preparedOption.option_id}]" value="{$preparedOption.option_value}"
+hint="{$preparedOption.hint}" class="{$extra.class}">
+	<xen:explain>{xen:raw $preparedOption.explain}</xen:explain>
+	<xen:html>
+		<ul>
+		<xen:foreach loop="{$preparedOption.permissionInterfaceGroups}" key="{$interfaceGroupId}" value="{$interfaceGroup}">
+			<xen:if hascontent="true">
+				<li>
+					{$interfaceGroup.title}
+					<ul class="checkboxColumns">
+						<xen:contentcheck>
+						<xen:if is="{$preparedOption.permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}">
+						<xen:foreach loop="{$preparedOption.permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}" value="{$permission}">
+							<xen:if is="{$permission.permission_type} == 'flag'">
+								<li>
+								<label for="ctrl_{$fieldPrefix}_{$preparedOption.option_id}_{$permission.permission_group_id}_{$permission.permission_id}_1">
+									<input type="checkbox" name="{$fieldPrefix}[{$preparedOption.option_id}][{$permission.permission_group_id}][{$permission.permission_id}]" value="1" id="ctrl_{$fieldPrefix}_{$preparedOption.option_id}_{$permission.permission_group_id}_{$permission.permission_id}_1" {xen:checked '{$preparedOption.option_value.{$permission.permission_group_id}.{$permission.permission_id}}'} />
+									{$permission.title}
+								</label>
+								</li>
+							</xen:if>
+						</xen:foreach>
+						</xen:if>
+						</xen:contentcheck>
+					</ul>
+				</li>
+			</xen:if>
+		</xen:foreach>
+		</ul>
+		<xen:include template="option_list_option_editlink" />
+		<input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+		{xen:raw $editLink}
+	</xen:html>
+</xen:controlunit>]]></template>
+  </admin_templates>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="controller_pre_dispatch" execute_order="10" callback_class="ThemeHouse_Listener_ControllerPreDispatch" callback_method="controllerPreDispatch" active="1" hint="" description=""/>
+    <listener event_id="file_health_check" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_FileHealthCheck" callback_method="fileHealthCheck" active="1" hint="" description=""/>
+    <listener event_id="init_dependencies" execute_order="10" callback_class="ThemeHouse_Listener_InitDependencies" callback_method="initDependencies" active="1" hint="" description=""/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_Forum" description="XenForo_Model_Forum (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_Permission" description="XenForo_Model_Permission (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_PermissionCache" description="XenForo_Model_PermissionCache (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_Thread" description="XenForo_Model_Thread (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_User" description="XenForo_Model_User (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_UserConfirmation" description="XenForo_Model_UserConfirmation (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_UserProfile" description="XenForo_Model_UserProfile (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_UserField" description="XenForo_Model_UserField (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassController" active="0" hint="XenForo_ControllerPublic_Account" description="XenForo_ControllerPublic_Account (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassDataWriter" active="0" hint="XenForo_DataWriter_User" description="XenForo_DataWriter_User (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassDataWriter" active="0" hint="XenForo_DataWriter_UserField" description="XenForo_DataWriter_UserField (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassView" active="0" hint="XenForo_ViewPublic_Account_PersonalDetails" description="XenForo_ViewPublic_Account_PersonalDetails (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassView" active="0" hint="XenForo_ViewPublic_Account_Signature" description="XenForo_ViewPublic_Account_Signature (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class" execute_order="20" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassModel" active="0" hint="XenForo_Model_Conversation" description="XenForo_Model_Conversation (For XenForo 1.2 and above)" compatibility_switch="1"/>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassController" active="1" hint="" description="(For XenForo 1.1 and below)" compatibility_switch="1"/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassDataWriter" active="1" hint="" description="(For XenForo 1.1 and below)" compatibility_switch="1"/>
+    <listener event_id="load_class_model" execute_order="20" callback_class="ThemeHouse_ParentalContro_Listener_LoadClassModel" callback_method="loadClassModel" active="1" hint="" description="(For XenForo 1.1 and below)" compatibility_switch="1"/>
+    <listener event_id="load_class_view" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_LoadClass" callback_method="loadClassView" active="1" hint="" description="(For XenForo 1.1 and below)" compatibility_switch="1"/>
+    <listener event_id="template_hook" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_TemplateHook" callback_method="templateHook" active="1" hint="" description=""/>
+    <listener event_id="template_post_render" execute_order="10" callback_class="ThemeHouse_ParentalContro_Listener_TemplatePostRender" callback_method="templatePostRender" active="1" hint="" description=""/>
+  </code_event_listeners>
+  <cron>
+    <entry entry_id="th_expirePCSessions" cron_class="ThemeHouse_ParentalContro_CronEntry_ExpireSessions" cron_method="expireSessions" active="1"><![CDATA[{"day_type":"dom","dom":["-1"],"hours":["-1"],"minutes":["33"]}]]></entry>
+  </cron>
+  <email_templates>
+    <template title="th_lost_password_parentalcontrol">
+      <subject><![CDATA[{xen:phrase th_parent_lost_password_subject_parentalcontrol, "boardTitle={$boardTitle}"}]]></subject>
+      <body_text><![CDATA[{xen:phrase th_parent_lost_password_body_text_parentalcontrol,
+	"username={$user.username}",
+	"board_title={$boardTitle}",
+	"confirm_link={xen:link 'canonical:account/parental-control/lost-password/confirm', '', 'c={$confirmation.confirmation_key}'}"
+}]]></body_text>
+      <body_html><![CDATA[<p style="margin-top: 0">{xen:phrase th_parent_lost_password_body_html_parentalcontrol,
+	'username={$user.username}',
+	'board=<a href="{xen:link canonical:index}" style="color: #176093; text-decoration: none">{$xenOptions.boardTitle}</a>'}</p>
+
+<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0"><a href="{xen:link 'canonical:account/parental-control/lost-password/confirm', '', 'c={$confirmation.confirmation_key}'}" style="color: #141414; text-decoration: none">{xen:link 'canonical:account/parental-control/lost-password/confirm', '', 'c={$confirmation.confirmation_key}'}<br />
+	<span style="color: #176093; font-size: 10px">{xen:link 'canonical:account/parental-control/lost-password/confirm', '', 'c={$confirmation.confirmation_key}'}</span></a></h2>
+
+<p>{xen:phrase ignore_email_if_not_requested}</p>
+
+<p>{xen:phrase thanks}<br />
+{$xenOptions.boardTitle}</p>]]></body_html>
+    </template>
+    <template title="th_lost_password_reset_parentalcontrol">
+      <subject><![CDATA[{xen:phrase th_parent_lost_password_reset_subject_parentalcontrol, "boardTitle={$boardTitle}"}]]></subject>
+      <body_text><![CDATA[{xen:phrase th_parent_lost_password_reset_body_text_parentalcontrol,
+	"username={$user.username}",
+	"email={$user.parent_email}",
+	"board_title={$boardTitle}",
+	"login_url={xen:link canonical:account/parental-control/login}",
+	"password={$password}"
+}]]></body_text>
+      <body_html><![CDATA[<p style="margin-top: 0">{xen:phrase th_parent_lost_password_reset_body_html_parentalcontrol,
+	'username={$user.username}',
+	'board=<a href="{xen:link canonical:index}" style="color: #176093; text-decoration: none">{$xenOptions.boardTitle}</a>'}</p>
+
+<p>{xen:phrase email_address}: <b>{$user.parent_email}</b>,<br />
+{xen:phrase password}:</p>
+
+<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0">{$password}</h2>
+
+<p><a href="{xen:link canonical:account/parental-control/login}" style="color: #176093">{xen:phrase log_in}</a></p>
+
+<p>{xen:phrase thanks}<br />
+{$xenOptions.boardTitle}</p>]]></body_html>
+    </template>
+    <template title="th_parent_email_confirmation_parentalcontrol">
+      <subject><![CDATA[{xen:phrase th_parent_email_confirmation_subject_parentalcontrol, "boardTitle={$boardTitle}"}]]></subject>
+      <body_text><![CDATA[{xen:phrase th_parent_email_confirmation_body_text_parentalcontrol,
+	"username={$user.username}",
+	"board_title={$boardTitle}",
+	"confirm_link={xen:link 'canonical:account/parental-control/confirmation-email', '', 'u={$user.user_id}', 'c={$confirmation.confirmation_key}'}"
+}]]></body_text>
+      <body_html><![CDATA[<p style="margin-top: 0">{xen:phrase th_parent_email_confirmation_body_html_parentalcontrol,
+	'username={$user.username}',
+	'board=<a href="{xen:link canonical:index}" style="color: #176093; text-decoration: none">{$xenOptions.boardTitle}</a>'}</p>
+
+<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0"><a href="{xen:link 'canonical:account/parental-control/confirmation-email', '', 'u={$user.user_id}', 'c={$confirmation.confirmation_key}'}" style="color: #176093; text-decoration: none">{xen:link 'canonical:account/parental-control/confirmation-email', '', 'u={$user.user_id}', 'c={$confirmation.confirmation_key}'}</a></h2>
+
+<p>{$xenOptions.boardTitle}</p>]]></body_html>
+    </template>
+    <template title="th_user_link_confirmation_parentalcontrol">
+      <subject><![CDATA[{xen:phrase th_user_email_confirmation_subject_parentalcontrol, "boardTitle={$boardTitle}"}]]></subject>
+      <body_text><![CDATA[{xen:phrase th_user_email_confirmation_body_text_parentalcontrol,
+	"username={$user.username}",
+	'parentEmail={$user.parent_email}',
+	"board_title={$boardTitle}",
+	"confirm_link={xen:link 'canonical:account/parental-control/confirmation-email', '', 'u={$user.user_id}', 'c={$confirmation.confirmation_key}'}"
+}]]></body_text>
+      <body_html><![CDATA[<p style="margin-top: 0">{xen:phrase th_user_email_confirmation_body_html_parentalcontrol,
+	'username={$user.username}',
+	'parentEmail={$user.parent_email}',
+	'board=<a href="{xen:link canonical:index}" style="color: #176093; text-decoration: none">{$xenOptions.boardTitle}</a>'}</p>
+
+<h2 style="font-size: 18pt; font-weight: normal; margin: 10px 0"><a href="{xen:link 'canonical:account/parental-control/confirmation-email', '', 'u={$user.user_id}', 'c={$confirmation.confirmation_key}'}" style="color: #176093; text-decoration: none">{xen:link 'canonical:account/parental-control/confirmation-email', '', 'u={$user.user_id}', 'c={$confirmation.confirmation_key}'}</a></h2>
+
+<p>{xen:phrase ignore_email_if_not_requested}</p>
+
+<p>{$xenOptions.boardTitle}</p>]]></body_html>
+    </template>
+  </email_templates>
+  <email_template_modifications/>
+  <optiongroups>
+    <group group_id="th_parentalControl" display_order="2000" debug_only="0"/>
+    <option option_id="th_parentalControl_limits" edit_format="callback" data_type="array" can_backup="1">
+      <default_value/>
+      <edit_format_params>ThemeHouse_ParentalContro_Option_Limits::renderOption</edit_format_params>
+      <sub_options>*</sub_options>
+      <relation group_id="th_parentalControl" display_order="100"/>
+    </option>
+    <option option_id="th_parentalControl_revocablePermissions" edit_format="callback" data_type="array" can_backup="1">
+      <default_value>a:5:{s:7:"general";a:7:{s:4:"view";s:1:"1";s:8:"viewNode";s:1:"1";s:11:"viewProfile";s:1:"1";s:6:"search";s:1:"1";s:13:"editSignature";s:1:"1";s:21:"followModerationRules";s:1:"1";s:6:"report";s:1:"1";}s:5:"forum";a:10:{s:10:"viewOthers";s:1:"1";s:11:"viewContent";s:1:"1";s:4:"like";s:1:"1";s:10:"postThread";s:1:"1";s:9:"postReply";s:1:"1";s:13:"deleteOwnPost";s:1:"1";s:11:"editOwnPost";s:1:"1";s:14:"viewAttachment";s:1:"1";s:16:"uploadAttachment";s:1:"1";s:8:"votePoll";s:1:"1";}s:6:"avatar";a:1:{s:7:"allowed";s:1:"1";}s:12:"conversation";a:2:{s:5:"start";s:1:"1";s:11:"editOwnPost";s:1:"1";}s:11:"profilePost";a:6:{s:4:"view";s:1:"1";s:4:"like";s:1:"1";s:9:"manageOwn";s:1:"1";s:9:"deleteOwn";s:1:"1";s:4:"post";s:1:"1";s:7:"editOwn";s:1:"1";}}</default_value>
+      <edit_format_params>ThemeHouse_ParentalContro_Option_Permissions::renderOption</edit_format_params>
+      <sub_options>*</sub_options>
+      <relation group_id="th_parentalControl" display_order="1"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="cron_entry_th_expirePCSessions" version_id="0" version_string="1.0.0"><![CDATA[Expire Parental Control Sessions]]></phrase>
+    <phrase title="option_group_th_parentalControl" version_id="1370633559" version_string="1.0.0"><![CDATA[Parental Control by ThemeHouse]]></phrase>
+    <phrase title="option_group_th_parentalControl_description" version_id="1370282534" version_string="1.0.0"><![CDATA[Options for the Parental Control by ThemeHouse add-on.]]></phrase>
+    <phrase title="option_th_parentalControl_limits" version_id="1370693337" version_string="1.0.0"><![CDATA[Limits that can be set by parents]]></phrase>
+    <phrase title="option_th_parentalControl_limits_explain" version_id="1370693337" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="option_th_parentalControl_revocablePermissions" version_id="1370633559" version_string="1.0.0"><![CDATA[Permissions that can be revoked by parents]]></phrase>
+    <phrase title="option_th_parentalControl_revocablePermissions_explain" version_id="1370633559" version_string="1.0.0"><![CDATA[]]></phrase>
+    <phrase title="th_account_confirmed_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[Account Confirmed]]></phrase>
+    <phrase title="th_awaiting_confirmation_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[Awaiting Confirmation]]></phrase>
+    <phrase title="th_disable_parental_control_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Disable Parental Control]]></phrase>
+    <phrase title="th_download_log_file_explain_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Download a log file listing the activity of this user account and all linked accounts for the last month.]]></phrase>
+    <phrase title="th_download_log_file_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Download Log File]]></phrase>
+    <phrase title="th_email_address_is_incorrect_parental_control" version_id="0" version_string="1.0.0"><![CDATA[Parental control email address entered is incorrect.]]></phrase>
+    <phrase title="th_email_confirmations_have_been_sent_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Email confirmations have been sent.]]></phrase>
+    <phrase title="th_email_confirmation_has_been_resent_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Email confirmation has been resent.]]></phrase>
+    <phrase title="th_email_confirmation_has_been_sent_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Email confirmation has been sent.]]></phrase>
+    <phrase title="th_email_explain_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[This cannot be the same email address as this account but can be associated with a different account. A confirmation email will be sent to this address.]]></phrase>
+    <phrase title="th_email_will_be_sent_to_x_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[This email will be sent to {email}.]]></phrase>
+    <phrase title="th_information_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Information]]></phrase>
+    <phrase title="th_limits_parentalcontrol" version_id="1370626695" version_string="1.0.0"><![CDATA[Limits]]></phrase>
+    <phrase title="th_linked_accounts_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Linked Accounts]]></phrase>
+    <phrase title="th_link_accounts_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Link Accounts]]></phrase>
+    <phrase title="th_login_for_parental_control_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Login for Parental Control]]></phrase>
+    <phrase title="th_login_successful_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Login Successful]]></phrase>
+    <phrase title="th_log_file_for_x_parentalcontrol" version_id="1365443525" version_string="1.0.0"><![CDATA[Log file for {name}]]></phrase>
+    <phrase title="th_log_out_parent_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Log Out Parent]]></phrase>
+    <phrase title="th_no_valid_users_found_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[No valid users were found.]]></phrase>
+    <phrase title="th_parental_control_confirmed_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Parental Control Confirmed]]></phrase>
+    <phrase title="th_parental_control_disabled_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parental Control Disabled]]></phrase>
+    <phrase title="th_parental_control_enabled_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Parental Control Enabled]]></phrase>
+    <phrase title="th_parental_control_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parental Control]]></phrase>
+    <phrase title="th_parent_email_address_must_not_be_same_as_account_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent email address must not be the same as the account email address.]]></phrase>
+    <phrase title="th_parent_email_confirmation_body_html_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent of {username}, in order to complete your parental control setup at {board}, you need to confirm your email address by following the link below.]]></phrase>
+    <phrase title="th_parent_email_confirmation_body_text_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[Parent of {username},
+
+In order to complete your parental control setup at {board_title}, you need to confirm your email address by following the link below.
+
+{confirm_link}
+
+{board_title}]]></phrase>
+    <phrase title="th_parent_email_confirmation_subject_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[{boardTitle} Parental Control Confirmation Required]]></phrase>
+    <phrase title="th_parent_email_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent Email]]></phrase>
+    <phrase title="th_parent_logged_in_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent Logged In]]></phrase>
+    <phrase title="th_parent_lost_password_body_html_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent of {username}, in order to reset your parental control password at {board}, you need to click the link below. This will generate a new password that will be emailed to you.]]></phrase>
+    <phrase title="th_parent_lost_password_body_text_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent of {username},
+
+In order to reset your parental control password at {board_title}, you need to click the link below. This will generate a new password that will be emailed to you.
+
+{confirm_link}
+
+If you did not request this email, you may safely ignore it.
+
+Thanks,
+{board_title}]]></phrase>
+    <phrase title="th_parent_lost_password_reset_body_html_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent of {username}, your parental control password at {board} has been reset. You may log in using the password listed below.]]></phrase>
+    <phrase title="th_parent_lost_password_reset_body_text_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent of {username},
+
+Your parental control password at {board_title} has been reset. You may log in using the password listed below.
+
+Email address: {email}
+New Password: {password}
+
+You may log in here:
+{login_url}
+
+Thanks,
+{board_title}]]></phrase>
+    <phrase title="th_parent_lost_password_reset_subject_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[{boardTitle} Parental Control Password Reset]]></phrase>
+    <phrase title="th_parent_lost_password_subject_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[{boardTitle} Parental Control Password Reset Request]]></phrase>
+    <phrase title="th_parent_of_x_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Parent of {username}]]></phrase>
+    <phrase title="th_real_date_of_birth_explain_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[The date of birth set here will be used to restrict access to age-related features on this site. A date of birth that can be made visible in the profile can be set on the <a href="{personalDetailsLink}">Personal Details</a> screen.]]></phrase>
+    <phrase title="th_real_date_of_birth_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Real Date of Birth]]></phrase>
+    <phrase title="th_register_for_parental_control_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Register for Parental Control]]></phrase>
+    <phrase title="th_resend_confirmation_email_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Resend Confirmation Email]]></phrase>
+    <phrase title="th_setup_awaiting_email_confirmation_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Your parental control setup is currently awaiting confirmation. Confirmation was sent to {parentEmail}.<br />
+<a href="{resendLink}" class="OverlayTrigger">Resend Confirmation Email</a>]]></phrase>
+    <phrase title="th_sure_you_want_to_disable_parental_control_for_x_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Are you sure you want to disable parental control for {name}?]]></phrase>
+    <phrase title="th_sure_you_want_to_resend_confirmation_email_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[Are you sure you want to resend the parental control confirmation email? Any previous account confirmation emails will no longer function.]]></phrase>
+    <phrase title="th_thanks_to_complete_registration_follow_link_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Thanks for registering for parental control. In order to complete your registration, you must follow the link in the email that has been sent to you.]]></phrase>
+    <phrase title="th_this_account_does_not_require_confirmation_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[This account does not require confirmation.]]></phrase>
+    <phrase title="th_user_email_confirmation_body_html_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[{username}, {parentEmail} has requested to add and manage parental controls on your account at {board}. You need to confirm this request by following the link below.]]></phrase>
+    <phrase title="th_user_email_confirmation_body_text_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[{username},
+
+{parentEmail} has requested to add and manage parental controls on your account at {board_title}. You need to confirm this request by following the link below.
+
+{confirm_link}
+
+If you did not request this email, you may safely ignore it.
+
+{board_title}]]></phrase>
+    <phrase title="th_user_email_confirmation_subject_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[{boardTitle} Parental Control Confirmation Required]]></phrase>
+    <phrase title="th_x_s_account_now_parental_control_managed_by_y_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[{username}'s account is now under parental control, managed by {parent_email}.
+]]></phrase>
+    <phrase title="th_your_account_now_parental_control_managed_by_x_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[Your account is now under parental control, managed by {parent_email}.
+]]></phrase>
+    <phrase title="th_your_email_could_not_be_confirmed_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[Your email address could not be confirmed. Please check that you are logged in as the correct user and try again.]]></phrase>
+    <phrase title="user_field_emergency_contact" version_id="1364658201" version_string="1.0.0"><![CDATA[Emergency Contact Information]]></phrase>
+    <phrase title="user_field_emergency_contact_desc" version_id="1364658201" version_string="1.0.0"><![CDATA[The contact details provided here will be used should we see extreme behavior from or at the affected accounts.]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties/>
+  <templates>
+    <template title="th_account_confirm_disable_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_disable_parental_control_parentalcontrol}</xen:title>
+
+<form action="{xen:link account/parental-control/disable}" method="post" class="xenForm formOverlay AutoValidator" data-redirect="on">
+
+	<p>{xen:phrase th_sure_you_want_to_disable_parental_control_for_x_parentalcontrol, 'name={$user.username}'}</p>
+	
+	<dl class="ctrlUnit submitUnit">
+			<dt></dt>
+			<dd>
+				<input type="submit" value="{xen:phrase th_disable_parental_control_parentalcontrol}" class="button primary" />
+			</dd>
+		</dl>
+
+	<input type="hidden" name="user_id" value="{$user.user_id}" />
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="th_account_confirm_resend_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_resend_confirmation_email_parentalcontrol}</xen:title>
+
+<form action="{xen:link account/parental-control/resend}" method="post" class="xenForm formOverlay AutoValidator">
+
+	<p>{xen:phrase th_sure_you_want_to_resend_confirmation_email_parentalcontrol}
+	<xen:if is="{$user.user_id} == {$visitor.user_id}">
+		{xen:phrase th_email_will_be_sent_to_x_parentalcontrol, 'email={$user.email}'}
+	</xen:if></p>
+	
+	<dl class="ctrlUnit submitUnit">
+			<dt></dt>
+			<dd>
+				<input type="submit" value="{xen:phrase resend_email}" class="button primary" />
+			</dd>
+		</dl>
+
+	<input type="hidden" name="user_id" value="{$user.user_id}" />
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="th_account_confirm_success_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[<xen:title>Account confirmed</xen:title>
+
+<div class="systemMessage">
+
+	<xen:if is="{$user.user_id} == {$visitor.user_id}">
+		{xen:phrase th_your_account_now_parental_control_managed_by_x_parentalcontrol, 'parent_email={$user.parent_email}'}
+	<xen:else />
+		{xen:phrase th_x_s_account_now_parental_control_managed_by_y_parentalcontrol, 'username={$user.username}', 'parent_email={$user.parent_email}'}
+	</xen:if>
+
+</div>]]></template>
+    <template title="th_account_login_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_login_for_parental_control_parentalcontrol}</xen:title>
+
+<form method="post" class="xenForm AutoValidator"
+	action="{xen:link 'account/parental-control/login/login'}"
+	data-redirect="on"
+>
+
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_parent_email">{xen:phrase th_parent_email_parentalcontrol}:</label></dt>
+		<dd><input type="email" name="parent_email" value="" dir="ltr" class="textCtrl" id="ctrl_parent_email" /></dd>
+	</dl>
+
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_parent_password">{xen:phrase password}:</label></dt>
+		<dd><input type="password" name="parent_password" class="textCtrl OptOut" id="ctrl_parent_password" autocomplete="off" /></dd>
+	</dl>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd>
+			<input type="submit" name="login" value="{xen:phrase log_in}" accesskey="l" class="button primary" />
+			<a href="{xen:link account/parental-control/lost-password}" class="OverlayTrigger OverlayCloser">{xen:phrase forgot_your_password}</a>
+		</dd>
+	</dl>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="th_account_log_out_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_log_out_parent_parentalcontrol}</xen:title>
+
+<form action="{xen:link account/parental-control/logout}" method="post" class="xenForm formOverlay">
+	<p>{xen:phrase you_sure_you_want_to_log_out}</p>
+	
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" class="button primary" value="{xen:phrase log_out}" /></dd>
+	</dl>
+	
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="th_account_lost_password_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase lost_password}</xen:title>
+
+<form action="{xen:link 'account/parental-control/lost-password/lost'}" method="post" class="xenForm formOverlay">
+	{xen:phrase if_forgotten_your_password_use_form_to_reset}
+	
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" value="{xen:phrase reset_password}" accesskey="s" class="button primary" /></dd>
+	</dl>
+	
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="th_account_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_parental_control_parentalcontrol}</xen:title>
+
+<xen:require css="member_list.css" />
+<xen:require js="js/themehouse/parentalcontrol/linked_users.js" />
+
+<form method="post" class="xenForm AutoValidator"
+	action="{xen:link 'account/parental-control/password-change'}"
+	data-optInOut="OptIn">
+	
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_parent_password_original">{xen:phrase your_existing_password}:</label></dt>
+		<dd>
+			<input type="password" name="old_parent_password" value="" dir="ltr" class="textCtrl" id="ctrl_parent_password_original" autofocus="autofocus" />
+			<p class="explain">{xen:phrase you_must_verify_existing_password_before_changing}</p>
+		</dd>
+	</dl>
+
+	<fieldset>
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_parent_password">{xen:phrase new_password}:</label></dt>
+			<dd><input type="password" name="parent_password" value="" dir="ltr" class="textCtrl" id="ctrl_parent_password" /></dd>
+		</dl>
+
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_parent_password_confirm">{xen:phrase confirm_new_password}:</label></dt>
+			<dd><input type="password" name="parent_password_confirm" value="" class="textCtrl" dir="ltr" id="ctrl_parent_password_confirm" /></dd>
+		</dl>
+	</fieldset>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase save}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>
+
+<form method="post" class="xenForm AutoValidator ParentLinkedForm"
+	action="{xen:link 'account/parental-control/link'}"
+	data-userInputField="#ctrl_users">
+
+	<h3 class="sectionHeader">{xen:phrase th_linked_accounts_parentalcontrol}</h3>
+
+	<fieldset>
+		<ul class="ParentLinkedList memberList">
+			<xen:if is="{$linkedUsers}">
+			<xen:foreach loop="$linkedUsers" value="$user">
+				<xen:include template="th_member_list_item_linked_parentalcontrol" />
+			</xen:foreach>
+			</xen:if>
+		</ul>
+
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_users">{xen:phrase th_link_accounts_parentalcontrol}:</label></dt>
+		<dd>
+			<input type="search" name="users" value="{$username}" results="0" placeholder="{xen:phrase name}..." class="textCtrl AutoComplete" id="ctrl_users" autofocus="autofocus" />
+			<p class="explain">{xen:phrase separate_names_with_comma}</p>
+		</dd>
+	</dl>
+	</fieldset>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase save}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>
+
+<form method="post" class="xenForm AutoValidator"
+	action="{xen:link 'account/parental-control-save'}">
+
+	<h3 class="sectionHeader">{xen:phrase th_information_parentalcontrol}</h3>
+
+	<fieldset>
+		<dl class="ctrlUnit">
+			<dt>{xen:phrase th_real_date_of_birth_parentalcontrol}:</dt>
+			<dd>
+				<xen:if is="{$visitor.dob_day} && {$visitor.dob_month} && {$visitor.dob_year}">
+					{xen:date $birthday.timeStamp, $birthday.format}
+					<p class="explain">{xen:phrase once_your_birthday_has_been_entered_it_cannot_be_changed}</p>
+				<xen:else />
+					<xen:include template="helper_birthday_input">
+						<xen:map from="$visitor" to="$user" />
+					</xen:include>
+					<p class="explain">{xen:phrase th_real_date_of_birth_explain_parentalcontrol, 'personalDetailsLink={xen:link account/personal-details}'}</p>
+				</xen:if>
+			</dd>
+		</dl>
+
+		<xen:include template="custom_fields_edit" />
+
+		<dl class="ctrlUnit">
+			<dt>{xen:phrase th_download_log_file_parentalcontrol}:</dt>
+			<dd>
+				<a href="{xen:link account/parental-control/download-log-file}" class="button">{xen:phrase th_download_log_file_parentalcontrol}</a>
+				<p class="explain">{xen:phrase th_download_log_file_explain_parentalcontrol}</p>
+			</dd>
+		</dl>
+
+		<dl class="ctrlUnit">
+			<dt>{xen:phrase th_disable_parental_control_parentalcontrol}:</dt>
+			<dd>
+				<a href="{xen:link account/parental-control/disable}" class="button OverlayTrigger">{xen:phrase th_disable_parental_control_parentalcontrol}</a>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<xen:if hascontent="true">
+	<h3 class="sectionHeader">{xen:phrase permissions}</h3>
+
+	<fieldset>
+		<xen:contentcheck>
+		<xen:foreach loop="{$permissionInterfaceGroups}" key="{$interfaceGroupId}" value="{$interfaceGroup}">
+			<xen:if hascontent="true">
+				<dl class="ctrlUnit checkboxColumns">
+					<dt>
+						{$interfaceGroup.title}:
+						<dfn><br><label><input type="checkbox" class="CheckAll" data-target="dd.ctrl_revoked_permissions_{$interfaceGroupId}"> {xen:phrase select_all}</label></dfn>
+					</dt>
+					<dd class="ctrl_revoked_permissions_{$interfaceGroupId}">
+						<ul>
+						<xen:contentcheck>
+						<xen:if is="{$permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}">
+						<xen:foreach loop="{$permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}" value="{$permission}">
+							<xen:if is="{$permission.permission_type} == 'flag'">
+								<li>
+								<label for="ctrl_revoked_permissions_{$permission.permission_group_id}_{$permission.permission_id}_1">
+									<input type="checkbox" name="revoked_permissions[{$permission.permission_group_id}][{$permission.permission_id}]" value="1" id="ctrl_revoked_permissions_{$permission.permission_group_id}_{$permission.permission_id}_1" {xen:checked '!{$revokedPermissions.{$permission.permission_group_id}.{$permission.permission_id}}'} />
+									{$permission.title}
+								</label>
+								<input type="hidden" name="revoked_permissions_shown[{$permission.permission_group_id}][]" value="{$permission.permission_id}" />
+								</li>
+
+							</xen:if>
+						</xen:foreach>
+						</xen:if>
+						</xen:contentcheck>
+						</ul>
+					</dd>
+				</dl>
+			</xen:if>
+		</xen:foreach>
+		</xen:contentcheck>
+	</fieldset>
+	</xen:if>
+
+	<xen:if hascontent="true">
+	<h3 class="sectionHeader">{xen:phrase th_limits_parentalcontrol}</h3>
+
+	<fieldset>
+		<xen:contentcheck>
+		<xen:foreach loop="{$permissionInterfaceGroups}" key="{$interfaceGroupId}" value="{$interfaceGroup}">
+			<xen:set var="$showTitle">1</xen:set>
+			<xen:if is="{$permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}">
+				<xen:foreach loop="{$permissionsInterfaceGrouped.{$interfaceGroupId}.permissions}" value="{$permission}">
+					<xen:if is="{$permission.permission_type} == 'integer'">
+						<dl class="ctrlUnit">
+							<dt>
+								<xen:if is="{$showTitle}">
+									{$interfaceGroup.title}:
+									<xen:set var="$showTitle">0</xen:set>
+								</xen:if>
+							</dt>
+							<dd class="ctrl_revoked_permissions_{$interfaceGroupId}">
+								<ul>
+									<li>{$permission.title}
+								</ul>
+								<ul>
+									<li>
+									<label><input type="radio" name="limits[{$permission.permission_group_id}][{$permission.permission_id}]" value="-1" {xen:checked '!{$limits.{$permission.permission_group_id}.{$permission.permission_id}}'}> {xen:phrase inherit}</label>
+									<input type="radio" name="limits[{$permission.permission_group_id}][{$permission.permission_id}]" value="1" {xen:checked '{$limits.{$permission.permission_group_id}.{$permission.permission_id}}'} class="Disabler" id="ctrl_revoked_permissions_{$permission.permission_group_id}_{$permission.permission_id}_1">
+										<span id="ctrl_revoked_permissions_{$permission.permission_group_id}_{$permission.permission_id}_1_Disabler">
+											<input type="text" name="limits[{$permission.permission_group_id}][{$permission.permission_id}]" value="{xen:if '{$limits.{$permission.permission_group_id}.{$permission.permission_id}}', {$limits.{$permission.permission_group_id}.{$permission.permission_id}}, '0'}" size="5" step="1" min="0" class="textCtrl autoSize number SpinBox" id="ctrl_revoked_permissions_{$permission.permission_group_id}_{$permission.permission_id}" autocomplete="off">
+										</span>
+									</li>
+								</ul>
+							</dd>
+						</dl>
+					</xen:if>
+				</xen:foreach>
+			</xen:if>
+		</xen:foreach>
+		</xen:contentcheck>
+	</fieldset>
+	</xen:if>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase save}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="th_account_register_parentalcontrol" version_id="1366402091" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_register_for_parental_control_parentalcontrol}</xen:title>
+
+<form method="post" class="xenForm AutoValidator"
+	action="{xen:link 'account/parental-control/register/register'}"
+	data-redirect="on"
+>
+
+	<xen:if is="{$visitor.parental_control_state} == 'email_confirm' || {$visitor.parental_control_state} == 'email_confirm_edit'">
+		<div class="secondaryContent">
+			{xen:phrase th_setup_awaiting_email_confirmation_parentalcontrol, 'parentEmail={$visitor.parent_email}', 'resendLink={xen:link account/parental-control/resend, '', 'user_id={$visitor.user_id}'}'}
+		</div>
+	</xen:if>
+
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_parent_email">{xen:phrase th_parent_email_parentalcontrol}:</label></dt>
+		<dd>
+			<input type="email" name="parent_email" value="{$visitor.parent_email}" dir="ltr" class="textCtrl" id="ctrl_parent_email" />
+			<p class="explain">{xen:phrase th_email_explain_parentalcontrol}</p>
+		</dd>
+	</dl>
+
+	<fieldset>
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_parent_password">{xen:phrase password}:</label></dt>
+			<dd><input type="password" name="parent_password" class="textCtrl OptOut" id="ctrl_parent_password" autocomplete="off" /></dd>
+		</dl>
+
+		<dl class="ctrlUnit">
+			<dt><label for="ctrl_confirm_parent_password">{xen:phrase confirm_password}:</label></dt>
+			<dd>
+				<input type="password" name="parent_password_confirm" class="textCtrl OptOut" id="ctrl_confirm_parent_password" />
+				<p class="explain">{xen:phrase enter_your_password_in_first_box_and_confirm_it_in_second}</p>
+			</dd>
+		</dl>
+	</fieldset>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd><input type="submit" name="save" value="{xen:phrase save}" accesskey="s" class="button primary" /></dd>
+	</dl>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="th_account_wrapper_sidebar_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[<li><a
+	class="{xen:if "{$selectedKey} == 'account/parental-control'", 'secondaryContent', 'primaryContent'}"
+	href="{xen:link account/parental-control}">{xen:phrase th_parental_control_parentalcontrol}</a></li>]]></template>
+    <template title="th_lock_icon_parentalcontrol" version_id="1365443525" version_string="1.0.0"><![CDATA[<xen:require css="th_lock_icon_parentalcontrol.css" />
+<div class="iconKey">
+	<xen:if is="{$locked}">
+		<xen:require js="js/themehouse/parentalcontrol/full/field_lock.js" />
+		<xen:if is="!{$isParentLoggedIn}">
+			<span data-fieldname="{$fieldName}" class="ParentLock locked" title="Locked">Locked</span>
+		<xen:else />
+			<a href="{xen:link account/parental-control/toggle-parent-field-lock, '', 'field_name={$fieldName}'}"><span data-fieldname="{$fieldName}" class="ParentLock locked" title="Locked">Locked</span></a>
+		</xen:if>
+	<xen:elseif is="{$isParentLoggedIn}" />
+		<a href="{xen:link account/parental-control/toggle-parent-field-lock, '', 'field_name={$fieldName}'}"><span class="unlocked" title="Unlocked">Unlocked</span></a>
+	</xen:if>
+</div>]]></template>
+    <template title="th_lock_icon_parentalcontrol.css" version_id="1364658201" version_string="1.0.0"><![CDATA[.iconKey .locked, .iconKey .unlocked
+{
+	background-position: -16px -16px;
+}
+
+.iconKey .unlocked
+{
+	opacity: 0.25;
+}
+
+.iconKey .locked, .iconKey .unlocked:hover
+{
+	opacity: 1;
+}
+
+.iconKey span
+{
+	position: absolute;
+	right: 0;
+	top: 0;
+	text-indent: -10000em;
+	background: transparent url('{xen:property imagePath}/xenforo/xenforo-ui-sprite.png') no-repeat 10000px 0;
+	width: 16px;
+	height: 16px;
+}
+
+.iconKey
+{
+	position: relative;
+}
+
+.xenForm.personalDetailsForm .statusEditorCounter
+{
+	top: 21px !important;
+}]]></template>
+    <template title="th_log_file_container_parentalcontrol" version_id="1365443525" version_string="1.0.0"><![CDATA[<!DOCTYPE html>
+<html id="XenForo" lang="{$visitorLanguage.language_code}" dir="{$visitorLanguage.text_direction}">
+<head>
+	<meta charset="utf-8" />
+	<xen:if is="{$requestPaths.fullBasePath}">
+		<base href="{$requestPaths.fullBasePath}" />
+		<script><xen:comment>/* Chrome bug and for Google cache */</xen:comment>
+			var _b = document.getElementsByTagName('base')[0], _bH = "{xen:jsescape $requestPaths.fullBasePath}";
+			if (_b && _b.href != _bH) _b.href = _bH;
+		</script>
+	</xen:if>
+
+	<title><xen:if is="{$title}">{xen:raw $title} | {$xenOptions.boardTitle}<xen:else />{$xenOptions.boardTitle}</xen:if></title>
+	
+	<style>
+		.JsOnly { display: none !important; }
+		html { min-width: auto !important; }
+		.searchResult { padding: 10px !important; }
+	</style>
+	<link rel="stylesheet" href="css.php?css=xenforo&amp;style={xen:urlencode $_styleId}&amp;dir={$visitorLanguage.text_direction}&amp;d={$visitorStyle.last_modified_date}" />
+	<!--XenForo_Require:CSS-->
+</head>
+
+<body>
+{xen:raw $contents}
+</body>
+</html>]]></template>
+    <template title="th_log_file_parentalcontrol" version_id="1365443525" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase th_log_file_for_x_parentalcontrol, 'name={$user.username}'}</xen:title>
+
+<xen:require css="search_results.css" />
+
+<div>
+
+<xen:if is="{$results}">
+	<ol>
+	<xen:foreach loop="$results" value="$result">
+		{xen:raw $result}
+	</xen:foreach>
+	</ol>
+<xen:else />
+	{xen:phrase x_has_not_posted_any_content_recently, 'name={$user.username}'}
+</xen:if>
+
+</div>]]></template>
+    <template title="th_member_list_item_linked_parentalcontrol" version_id="1370693337" version_string="1.0.0"><![CDATA[<xen:require css="th_member_list_item_parentalcontrol.css" />
+
+<xen:include template="member_list_item">
+	<xen:set var="$id">user_list_{$user.user_id}</xen:set>
+	<xen:set var="$extraTemplate">
+		<xen:if is="{$user.parental_control_state} == 'enabled'">
+			<a href="{xen:link 'account/parental-control/disable', '', 'user_id={$user.user_id}'}"
+				class="DisableParentalControlLink button smallButton"
+				data-jsonUrl="{xen:link 'account/parental-control/disable.json'}"
+				data-userId="{$user.user_id}">{xen:phrase th_disable_parental_control_parentalcontrol}</a>
+		<xen:else />
+			{xen:phrase th_awaiting_confirmation_parentalcontrol}<br />
+			<a href="{xen:link account/parental-control/resend, '', 'user_id={$user.user_id}'}" class="OverlayTrigger">{xen:phrase th_resend_confirmation_email_parentalcontrol}</a>
+		</xen:if>
+	</xen:set>
+</xen:include>]]></template>
+    <template title="th_member_list_item_parentalcontrol.css" version_id="1366402091" version_string="1.0.0"><![CDATA[.ParentLinkedList .memberListItem .extra
+{
+	text-align: right;
+}]]></template>
+    <template title="th_moderator_bar_logged_in_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[<xen:require css="th_moderator_bar_parentalcontrol.css" />
+<a href="{xen:link account/parental-control/logout}" class="parentalControl OverlayTrigger">
+	<span class="itemLabel">{xen:phrase th_parent_logged_in_parentalcontrol}</span>
+</a>]]></template>
+    <template title="th_moderator_bar_parentalcontrol.css" version_id="0" version_string="1.0.0"><![CDATA[#moderatorBar .parentalControl,
+#moderatorBar .parentalControl:hover
+{
+	background: #e03030;
+	color: white;
+	box-shadow: 2px 2px 5px rgba(0,0,0, 0.25);
+	font-weight: bold;
+	float: right;
+}]]></template>
+    <template title="th_navigation_visitor_tab_parentalcontrol" version_id="0" version_string="1.0.0"><![CDATA[<li><a href="{xen:link account/parental-control}">{xen:phrase th_parental_control_parentalcontrol}</a></li>]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="footer" modification_key="th_copyrightNotice_parentalContro" description="Copyright notice for [⌂] Parental Control" execution_order="1" enabled="1" action="callback">
+      <find><![CDATA[/{xen:phrase (?:xenforo|extra)_copyright}/]]></find>
+      <replace><![CDATA[ThemeHouse_Listener_InitDependencies::copyrightNotice]]></replace>
+    </modification>
+    <modification template="footer" modification_key="th_copyrightNotice_parentalControl" description="Copyright notice for Parental Control by ThemeHouse" execution_order="1" enabled="1" action="callback">
+      <find><![CDATA[/{xen:phrase (?:xenforo|extra)_copyright}/]]></find>
+      <replace><![CDATA[ThemeHouse_Listener_InitDependencies::copyrightNotice]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
